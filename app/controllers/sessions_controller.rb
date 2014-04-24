@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  before_action :user_signed_in?, only: [:new, :create]
+  before_action :user_signed_in?, only: [:new]
 
   def new
     @user = User.new
@@ -7,9 +7,10 @@ class SessionsController < ApplicationController
 
   def create
     user = User.find_by_credentials(user_params[:user_name], user_params[:password])
-
     if user.nil?
-      flash.now[:error] << "Username and/or password is incorrect"
+      @user = User.new(user_params)
+      flash[:errors] ||= []
+      flash.now[:errors] << "Username and/or password is incorrect"
       render :new
     else
       login_user!(user)
@@ -18,9 +19,10 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    user = User.find(parmas[:id])
+    user = User.find(current_user.id)
     session[:session_token] = nil
     user.reset_session_token!
+    redirect_to cats_url
   end
 
 

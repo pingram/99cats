@@ -10,9 +10,7 @@ module SessionsHelper
   end
 
   def login_user!(user)
-    current_user = user
-    # user.reset_session_token!
+    self.current_user = user
   end
-
 
 end

@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
   def new
     @user = User.new
-
   end
 
   def create
@@ -10,6 +9,7 @@ class UsersController < ApplicationController
       login_user!(@user)
       redirect_to cats_url
     else
+      flash[:errors] ||= []
       flash[:errors] << "Unable to create that account"
       render :new
     end

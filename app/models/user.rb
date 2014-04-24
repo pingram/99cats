@@ -9,6 +9,11 @@ class User < ActiveRecord::Base
   validates :password, length: { minimum: 6, allow_nil: true }
   before_validation :ensure_session_token
 
+  has_many :cats,
+          class_name: "Cat",
+          foreign_key: :user_id,
+          primary_key: :id
+
   def self.find_by_credentials(user_name, password)
     user = User.find_by_user_name(user_name)
     return nil if user.nil?
@@ -36,6 +41,5 @@ class User < ActiveRecord::Base
   private
   def ensure_session_token
     self.session_token ||= self.class.generate_session_token
-    self.save!
   end
 end
