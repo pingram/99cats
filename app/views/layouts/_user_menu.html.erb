@@ -1,0 +1,5 @@
+<% if current_user %>
+<%= button_to "Logout #{current_user.user_name.capitalize}", session_url, method: :delete %>
+<% else %>
+<%= button_to "Login", new_session_url, method: :get %>
+<% end %>

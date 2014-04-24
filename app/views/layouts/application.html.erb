@@ -8,7 +8,9 @@
 </head>
 <body>
 
-<%= @current_user ? @current_user.user_name : link_to("Login", new_session_url) %>
+<%= render :partial => "layouts/user_menu" %>
+
+<%= render :partial => "layouts/errors" %>
 
 <%= yield %>
 
