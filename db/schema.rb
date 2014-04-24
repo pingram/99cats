@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140424180705) do
+ActiveRecord::Schema.define(version: 20140424203800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20140424180705) do
 
   create_table "cats", force: true do |t|
     t.integer  "age",        null: false
-    t.date     "birth_date", null: false
+    t.date     "birth_date"
     t.string   "color",      null: false
     t.string   "name",       null: false
     t.string   "sex",        null: false

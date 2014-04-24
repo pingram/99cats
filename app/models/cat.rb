@@ -1,12 +1,15 @@
 class Cat < ActiveRecord::Base
-  validates :birth_date, :name, presence: true
-  validates :age, presence: true, numericality: true
-  colors = %w(white black orange brown yellow calico)
-  validates :color, presence: true, inclusion: { in: colors }
-  validates :sex, presence: true, inclusion: { in: %w(M F) }
+
+  validates :age, :name, :sex, presence: true
+  validates :age, numericality: true
+  validates :sex, inclusion: { in: %w(M F) }
+
   has_many(
-    :rentals,
+    :rental_requests,
     class_name: "CatRentalRequest",
-    foreign_key: :cat_id
+    foreign_key: :cat_id,
+    primary_key: :id,
+    :dependent => :destroy
   )
+
 end

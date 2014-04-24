@@ -17,8 +17,12 @@
 # cat4.save!
 # cat5.save!
 
-CatRentalRequest.create!(cat_id: 1, start_date: "2014-01-23", end_date: "2014-02-23")
-CatRentalRequest.create!(cat_id: 1, start_date: "2014-01-24", end_date: "2014-01-30")
-CatRentalRequest.create!(cat_id: 1, start_date: "2014-03-13", end_date: "2014-04-01")
-CatRentalRequest.create!(cat_id: 2, start_date: "2014-03-13", end_date: "2014-04-01")
-CatRentalRequest.create!(cat_id: 5, start_date: "2014-01-24", end_date: "2014-01-30")
+cat1 = Cat.create(name: "Sammy", sex: "M", age: 11, color: "brown")
+cat2 = Cat.create(name: "Serena", sex: "F", age: 8, color: "orange")
+cat3 = Cat.create(name: "Balthazar", sex: "M", age: 18, color: "white")
+cat4 = Cat.create(name: "Beauty", sex: "F", age: 2, color: "tabby")
+
+crr1 = CatRentalRequest.create(cat_id: cat1.id, start_date: Date.today, end_date: Date.tomorrow, status: "PENDING")
+crr2 = CatRentalRequest.create(cat_id: cat1.id, start_date: Date.tomorrow, end_date: Date.new(2014, 4, -3), status: "PENDING")
+crr3 = CatRentalRequest.create(cat_id: cat1.id, start_date: Date.tomorrow, end_date: Date.new(2014, 4, -3), status: "PENDING")
+crr4 = CatRentalRequest.create(cat_id: cat2.id, start_date: Date.tomorrow, end_date: Date.new(2014, 4, 25), status: "PENDING")

@@ -1,3 +1,4 @@
-<h1>Edit Cat</h1>
-
-<%= render partial: 'form' %>
+<h1 id="edit_cat">Edit <%= @cat.name %>'s Information</h1>
+<div id="cat_form">
+  <%= render partial: 'form', locals: { cat: @cat } %>
+</div>

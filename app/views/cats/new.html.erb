@@ -1,4 +1,4 @@
-<h1>Pimp a New Cat</h1>
-
-<%= render partial: 'form' %>
-
+<h1 id="new_cat">New Cat</h1>
+<div id="cat_form">
+  <%= render partial: 'form', locals: { cat: @cat } %>
+</div>

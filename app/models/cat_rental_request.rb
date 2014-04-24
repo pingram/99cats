@@ -1,43 +1,89 @@
 class CatRentalRequest < ActiveRecord::Base
+  before_validation :set_status
+
   validates :cat_id, :start_date, :end_date, presence: true
-  statuses = %w(PENDING APPROVED DENIED)
-  validates :status, presence: true, inclusion: {in: statuses }
-  #validates [:cat, :status], uniqueness: true
-  before_validation(on: :create) do
-    self.status ||= 'PENDING'
-  end
+  validates :status, inclusion: { in: %w(PENDING APPROVED DENIED) }
+
   belongs_to :cat
 
-  def overlapping_requests
-    query = "cat_id = #{self.cat_id}
-      AND ((start_date::DATE, end_date::DATE)
-      OVERLAPS ('#{self.start_date}'::DATE, '#{self.end_date}'::DATE))"
-    overlapping_reqs = CatRentalRequest.where(query)
-    overlapping_reqs - [self]
-  end
-
-  def overlapping_approved_requests
-    overlapping_requests.select{|ol_request| ol_request.status.upcase == 'APPROVED' }
-  end
-
-  def overlapping_pending_requests
-    overlapping_requests.select{|ol_request| ol_request.status.upcase == 'PENDING' }
-  end
-
   def approve!
-    CatRentalRequest.transaction do
-      self.status = "APPROVED" if overlapping_approved_requests.empty?
-      overlapping_pending_requests.each { |request| request.deny! }
-      self.save!
+    raise "An overlapping APPROVED request exists." unless overlapping_approved_requests.empty?
+    self.class.transaction do
+      update(status: "APPROVED")
+      overlapping_pending_requests.each do |request|
+        request.update(status: "DENIED")
+      end
     end
   end
 
   def deny!
-    CatRentalRequest.transaction do
-      self.status = "DENIED"
-      self.save!
-    end
+    update(status: "DENIED")
   end
 
+  def overlapping_requests
+    sql_params = {
+      cat_id: cat_id,
+      start_date: start_date,
+      end_date: end_date,
+      id: id
+    }
+    CatRentalRequest.select("*").where(<<-SQL, sql_params)
+      id != :id
+    AND
+      cat_id = :cat_id
+    AND
+      (start_date BETWEEN :start_date AND :end_date
+      OR
+      end_date BETWEEN :start_date AND :end_date)
+    SQL
+  end
+
+  def overlapping_pending_requests
+    sql_params = {
+      cat_id: cat_id,
+      start_date: start_date,
+      end_date: end_date,
+      id: id,
+      status: "PENDING"
+    }
+    CatRentalRequest.select("*").where(<<-SQL, sql_params)
+      id != :id
+    AND
+      cat_id = :cat_id
+    AND
+      status = :status
+    AND
+      (start_date BETWEEN :start_date AND :end_date
+      OR
+      end_date BETWEEN :start_date AND :end_date)
+    SQL
+  end
+
+  def overlapping_approved_requests
+    sql_params = {
+      cat_id: cat_id,
+      start_date: start_date,
+      end_date: end_date,
+      id: id,
+      status: "APPROVED"
+    }
+    CatRentalRequest.select("*").where(<<-SQL, sql_params)
+      id != :id
+    AND
+      cat_id = :cat_id
+    AND
+      status = :status
+    AND
+      (start_date BETWEEN :start_date AND :end_date
+      OR
+      end_date BETWEEN :start_date AND :end_date)
+    SQL
+  end
+
+  private
+
+    def set_status
+      self.status ||= "PENDING"
+    end
 
 end

@@ -1,35 +1,59 @@
 class CatRentalRequestsController < ApplicationController
-  def new
-    @cats = Cat.all
 
-    render :new
+  def index
+    @requests = CatRentalRequest.all
   end
 
-  def create
-    @cat_rent = CatRentalRequest.new(cat_rental_params)
-    if @cat_rent.save
-      redirect_to cat_url(Cat.find(params[:cat_rental_request][:cat_id]))
-    else
-      render :plain, @cat_rent.errors.full_messages
-    end
+  def show
+    @request = CatRentalRequest.find(params[:id])
+  end
+
+  def new
+    @request = CatRentalRequest.new()
+    @cats = Cat.all
+  end
+
+  def edit
+    @request = CatRentalRequest.find(params[:id])
+    @cats = Cat.all
   end
 
   def update
-    @cat_rent = CatRentalRequest.find(params[:id])
-    if params[:decision] == "approve"
-      @cat_rent.approve!
-      flash.notice = "Cat Request Approved!"
+    @request = CatRentalRequest.find(params[:id])
+    if @request.valid?
+      @request.update(request_params)
+      redirect_to cat_url(@request.cat)
     else
-      @cat_rent.deny!
-      flash.notice = "Cat Request Denied!"
+      @request.errors.full_messages
     end
+  end
 
-    redirect_to :back
+  def create
+    @request = CatRentalRequest.new(request_params)
+    if @request.valid?
+      @request.save!
+      redirect_to cat_url(@request.cat)
+    else
+      @request.errors.full_messages
+    end
+  end
+
+  def approve
+    @request = CatRentalRequest.find(params[:id])
+    @request.approve!
+    redirect_to cat_url(@request.cat)
+  end
+
+  def deny
+    @request = CatRentalRequest.find(params[:id])
+    @request.deny!
+    redirect_to cat_url(@request.cat)
   end
 
   private
-  def cat_rental_params
-    params.require(:cat_rental_request).permit(:cat_id, :start_date, :end_date)
+
+  def request_params
+    params.require(:cat_rental_request).permit(:cat_id, :start_date, :end_date, :status)
   end
 
 end

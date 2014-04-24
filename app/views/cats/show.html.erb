@@ -1,39 +1,13 @@
-<h1> <%= @cat.name %> </h1>
-
+<h3><%= @cat.name %></h3>
 <table>
   <tr>
-    <td> Age: <%=@cat.age%> </td>
-  </tr>
-  <tr>
-    <td> Birth date: <%=@cat.birth_date%> </td>
-  </tr>
-  <tr>
-    <td> Color: <%=@cat.color%> </td>
-  </tr>
-  <tr>
-    <td> Sex: <%=@cat.sex%> </td>
+    <td><%= @cat.color %></td>
+    <td><%= @cat.sex %></td>
   </tr>
 </table>
-
-<table>
-  <tr>
-    <th>Start Date</th>
-    <th>End Date</th>
-  </tr>
-  <% @cat.rentals.each do |rental| %>
-  <tr>
-    <td> <%=rental.start_date%> </td>
-    <td> <%=rental.end_date%> </td>
-    <%if rental.status == "APPROVED" %>
-      <td> Approved </td>
-    <%elsif rental.status == "DENIED"%>
-      <td> Denied</td>
-    <%else%>
-      <td><%= button_to "Approve", cat_rental_request_url(rental), params: {decision: "approve"}, :method => "patch" %></td>
-      <td><%= button_to "Deny", cat_rental_request_url(rental), params: {decision: "deny"}, :method => "patch" %></td>
-    <% end%>
-  </tr>
+<p>Rental Requests: <%= @cat.rental_requests.count %></p>
+<div>
+  <% @cat.rental_requests.order(:start_date).each do |request| %>
+    <%= render partial: "cat_rental", locals: {request: request} %>
   <% end %>
-</table>
-
-
+</div>
