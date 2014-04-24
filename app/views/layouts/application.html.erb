@@ -8,6 +8,8 @@
 </head>
 <body>
 
+<%= @current_user ? @current_user.user_name : link_to("Login", new_session_url) %>
+
 <%= yield %>
 
 </body>

@@ -16,6 +16,13 @@ class SessionsController < ApplicationController
     end
   end
 
+  def destroy
+    user = User.find(parmas[:id])
+    session[:session_token] = nil
+    user.reset_session_token!
+  end
+
+
   private
 
   def user_params
