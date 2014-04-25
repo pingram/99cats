@@ -30,8 +30,12 @@ class User < ActiveRecord::Base
     BCrypt::Password.new(self.password_digest).is_password?(password)
   end
 
-  def generate_session_token
-    session = Session.create(user_id: self.id, token: SecureRandom::urlsafe_base64(16))
+  def generate_session_token(user_agent)
+    session = Session.create(
+      user_id: self.id,
+      token: SecureRandom::urlsafe_base64(16),
+      user_agent: user_agent
+    )
     session.token
   end
 

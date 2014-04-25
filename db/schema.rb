@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140424234044) do
+ActiveRecord::Schema.define(version: 20140425003637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 20140424234044) do
     t.string   "token",      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "user_agent"
   end
 
   add_index "sessions", ["token"], name: "index_sessions_on_token", using: :btree

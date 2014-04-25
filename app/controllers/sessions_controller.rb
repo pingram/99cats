@@ -26,6 +26,10 @@ class SessionsController < ApplicationController
     redirect_to cats_url
   end
 
+  def show
+    @user_sessions = Session.where("user_id = ?", current_user.id)
+  end
+
 
   private
 
